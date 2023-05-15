@@ -11,13 +11,14 @@ class MovieAdmin(admin.ModelAdmin):
     ordering = ['-rating', '-name']
     list_per_page = 10
 
+    @admin.display(ordering='rating', description='status')
     def rating_status(self, mov: Movie):
         if mov.rating < 50:
             return 'This movie with bad reviews'
         if mov.rating < 70:
             return 'You can watch this movie one time'
         if mov.rating <= 85:
-            return 'This movie is excellent'
+            return 'It\'s worth to be watch'
         return 'It\'s excellent movie'
 
 
