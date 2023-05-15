@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from .models import Movie
 from django.db.models import QuerySet
 @admin.register(Movie)
@@ -7,7 +7,7 @@ class MovieAdmin(admin.ModelAdmin):
     list_editable = ['rating', 'currency', 'budget']
     ordering = ['-rating', '-name']
     list_per_page = 10
-    actions = ['set_dollars']
+    actions = ['set_dollars', 'set_euro']
 
     @admin.display(ordering='rating', description='status')
     def rating_status(self, mov: Movie):
@@ -21,6 +21,14 @@ class MovieAdmin(admin.ModelAdmin):
     @admin.action(description='To set currency as dollar')
     def set_dollars(self, request, qs: QuerySet):
         qs.update(currency=Movie.USD)
+    @admin.action(description='To set currency as euro')
+    def set_euro(self, request, qs: QuerySet):
+        count_updated = qs.update(currency=Movie.EUR)
+        self.message_user(
+            request,
+            f'{count_updated} entries have been updated',
+            messages.ERROR
+        )
 
 
 
