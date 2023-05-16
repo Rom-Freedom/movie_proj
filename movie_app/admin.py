@@ -8,20 +8,20 @@ class RatingFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return [
-            ('<40', 'lower'),
-            ('from 40 to 59', 'average'),
-            ('from 60 t0 79', 'high'),
-            ('>=80', 'highest')
+            ('0-40', 'lower'),
+            ('40-59', 'average'),
+            ('60-79', 'high'),
+            ('80-100', 'highest')
         ]
 
     def queryset(self, request, queryset: QuerySet):
-        if self.value() == '<40':
+        if self.value() == '0-40':
             return queryset.filter(rating__lt=40)
-        if self.value() == 'from 40 to 59':
+        if self.value() == '40-59':
             return queryset.filter(rating__gte=40).filter(rating__lt=60)
-        if self.value() == 'from 60 t0 79':
+        if self.value() == '60-79':
             return queryset.filter(rating__gte=60).filter(rating__lt=80)
-        if self.value() == '>=80':
+        if self.value() == '80-100':
             return queryset.filter(rating__gt=80)
         return queryset
 
