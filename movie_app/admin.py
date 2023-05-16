@@ -3,7 +3,8 @@ from .models import Movie
 from django.db.models import QuerySet
 
 class RatingFilter(admin.SimpleListFilter):
-    title = 'Filter by rating'
+    title = 'Filter rating'
+    parameter_name = 'rating'
 
     def lookups(self, request, model_admin):
         return [
@@ -14,6 +15,14 @@ class RatingFilter(admin.SimpleListFilter):
         ]
 
     def queryset(self, request, queryset: QuerySet):
+        if self.value() == '<40':
+            return queryset.filter(rating__lt=40)
+        if self.value() == 'from 40 to 59':
+            return queryset.filter(rating__gte=40).filter(rating__lt=60)
+        if self.value() == 'from 60 t0 79':
+            return queryset.filter(rating__gte=60).filter(rating__lt=80)
+        if self.value() == '>=80':
+            return queryset.filter(rating__gt=80)
         return queryset
 
 
@@ -25,7 +34,7 @@ class MovieAdmin(admin.ModelAdmin):
     list_per_page = 10
     actions = ['set_dollars', 'set_euro']
     search_fields = ['name__startswith', 'rating']
-    list_filter = ['name', 'currency', 'RatingFilter']
+    list_filter = ['name', 'currency', RatingFilter]
 
     @admin.display(ordering='rating', description='status')
     def rating_status(self, mov: Movie):
