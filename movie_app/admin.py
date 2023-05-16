@@ -1,6 +1,22 @@
 from django.contrib import admin, messages
 from .models import Movie
 from django.db.models import QuerySet
+
+class RatingFilter(admin.SimpleListFilter):
+    title = 'Filter by rating'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('<40', 'lower'),
+            ('from 40 to 59', 'average'),
+            ('from 60 t0 79', 'high'),
+            ('>=80', 'highest')
+        ]
+
+    def queryset(self, request, queryset: QuerySet):
+        return queryset
+
+
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
     list_display = ['name', 'rating', 'currency', 'budget', 'rating_status']
@@ -9,6 +25,7 @@ class MovieAdmin(admin.ModelAdmin):
     list_per_page = 10
     actions = ['set_dollars', 'set_euro']
     search_fields = ['name__startswith', 'rating']
+    list_filter = ['name', 'currency', 'RatingFilter']
 
     @admin.display(ordering='rating', description='status')
     def rating_status(self, mov: Movie):
